@@ -150,7 +150,7 @@ class OrderItem(Model, Base):
 
 
 class OrderAdditionFee(Model, Base):
-    pass
+    __tablename__ = 'order_addition_fees'
 
 
 class PriceHistory(Model, Base):

@@ -5,13 +5,17 @@ from tornado.web import url
 from tornado.web import Application as BaseApplication
 
 import config
+
 from markify.handlers import user
+from markify.handlers import order
 
 
 class Application(BaseApplication):
 
     def __init__(self):
         handlers = [
+            url(r'/order/create', order.CreateRequestHandler, name='order.create'),
+
             url(config.LOGIN_URL, user.LoginRequestHandler, name='login'),
             url(r'/register', user.RegisterRequestHandler, name='register'),
             url(r'/logout', user.LogoutRequestHandler, name='logout')

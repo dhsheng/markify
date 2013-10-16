@@ -6,7 +6,7 @@ from markify.handlers.base import BaseRequestHandler
 class CreateRequestHandler(BaseRequestHandler):
 
     def get(self):
-        pass
+        return self.render('order/create.mako')
 
     def post(self):
         pass
