@@ -5,7 +5,6 @@ from tornado.web import url
 from tornado.web import Application as BaseApplication
 
 import config
-from markify.db import get_session
 from markify.handlers import user
 
 
@@ -22,14 +21,11 @@ class Application(BaseApplication):
             'cookie_secret': config.SESSION_KEY,
             'template_path': config.TEMPLATE_DIRS,
             'login_url': config.LOGIN_URL,
-            'xsrf_cookies': config.ENABLE_XSRF_TOKEN
+            'xsrf_cookies': config.ENABLE_XSRF_TOKEN,
+            'static_path': config.STATIC_PATH
         }
         super(Application, self).__init__(handlers, **settings)
-        self._db_session = get_session()
 
-    @property
-    def db_session(self):
-        return self._db_session
 
 if __name__ == '__main__':
     if config.DEBUG:
@@ -37,7 +33,3 @@ if __name__ == '__main__':
     application = Application()
     application.listen(8888)
     IOLoop.instance().start()
-
-
-
-

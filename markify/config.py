@@ -20,7 +20,7 @@ LOGGED_REDIRECT_URL = '/dashboard'
 RESPONSE_DATA_KEY = 'data'
 RESPONSE_FLAG_KEY = 'success'
 RESPONSE_ERROR_KEY = 'error'
-
+STATIC_PATH = os.path.join(BASE_DIRECTORY, 'static')
 TEMPLATE_DIRS = (
     os.path.join(BASE_DIRECTORY, 'templates'),
 )

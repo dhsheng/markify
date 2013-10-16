@@ -76,6 +76,7 @@ class User(Model, Base):
 class Customer(Model, Base):
 
     __tablename__ = 'customers'
+
     user_id = Column(LargeBinary(16), nullable=False)
     email = Column(String(150), nullable=False, default='')
     name = Column(String(50), nullable=False, default='')
@@ -88,16 +89,20 @@ class Customer(Model, Base):
 
 
 class Product(Model, Base):
+
     __tablename__ = 'products'
+
     name = Column(String(255), nullable=False)
     total = Column(Float(2), nullable=False, default=.00)
     amount = Column(Numeric(2), nullable=False, default=.00)
     repo_id = Column(LargeBinary(16), default=None)
+
     def __repr__(self):
         return self.name
 
 
 class Repository(Model, Base):
+
     __tablename__ = 'repositories'
 
     name = Column(String(255), nullable=False)
@@ -128,7 +133,7 @@ class OrderItem(Model, Base):
     width = Column(Float)
     count = Column(Integer)
     price = Column(Numeric)
-
+    area = Column(Float)
     steel_price = Column(Numeric, default=.00)
     steel_count = Column(Float, default=0)
     drill_price = Column(Numeric, default=.00)
@@ -139,7 +144,6 @@ class OrderItem(Model, Base):
     edg_count = Column(Numeric, default=0)
     chamfer_price = Column(Numeric, default=.00)
     chamfer_count = Column(Float, default=.0)
-
 
     def __repr__(self):
         return u'%s[%sx%s]' % (self.product_id, self.length, self.width)

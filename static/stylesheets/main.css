@@ -1,0 +1,36 @@
+.panel {
+    margin-top: 15px !important;
+}
+
+td .progress {
+    margin: 0 !important;
+}
+body {
+    padding: 0 !important;
+}
+
+      .container-narrow {
+        margin: 0 auto;
+        max-width: 85%;
+      }
+      .container-narrow > hr {
+        margin: 30px 0;
+      }
+
+
+      .marketing {
+        margin: 30px 0 40px 0;
+      }
+      .marketing p + h4 {
+        margin-top: 28px;
+      }
+
+     .nav > li {
+         margin-left: 25px !important;
+     }
+
+     .nav > li > a {
+    display: block;
+    padding: 8px 15px !important;
+    position: relative;
+}
