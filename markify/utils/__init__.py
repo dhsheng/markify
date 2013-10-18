@@ -1,1 +1,2 @@
-__author__ = 'hs'
+#-*- coding:utf-8 -*-
+
