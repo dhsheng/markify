@@ -54,8 +54,7 @@ class CreateRequestHandler(CustomerRequestHandler):
                 if session:
                     session.close()
         else:
-            data[RESPONSE_ERROR_KEY] = u''
-
+            data[RESPONSE_ERROR_KEY] = customer.get_errors()
         if RESPONSE_ERROR_KEY in data:
             data[RESPONSE_FLAG_KEY] = False
         else:
@@ -145,9 +144,3 @@ class ViewRequestHandler(CustomerRequestHandler):
             if session:
                 session.commit()
         return self.finish(data)
-
-
-
-
-
-
