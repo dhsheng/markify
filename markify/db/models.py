@@ -126,6 +126,8 @@ class OrderItem(Model, Base):
 
     __tablename__ = 'order_items'
 
+    CHAMFER_SIZE = 4
+
     order_id = Column(LargeBinary(16))
     product_id = Column(LargeBinary(16))
     product_name = Column(String(255))

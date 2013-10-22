@@ -18,81 +18,36 @@
         </label>
     </div>
     <div class="controls" id="orders-wrapper" style="margin-top:20px;">
-        <a href="#create-order-item-window"
+        <a href="#" id="add-item"
            role="button" class="btn" data-toggle="modal">添加订单项</a>
-        <table class="table table-bordered" id="orders">
+        <table class="table table-bordered hide" id="orders-table"  style="margin:10px 0;">
+            <thead id="orders-table-head">
+                    <tr>
+                        <th>品种</th>
+                        <th>规格</th>
+                        <th>数量</th>
+                        <th>价格/<sub>m</sub><sup>2</sup></th>
+                        <th>磨边/<sub>m</sub><sup>2</sup></th>
+                        <th>倒角/<sub>个</sub></th>
+                        <th>钢化/<sub>m</sub><sup>2</sup></th>
+                        <th>喷漆/<sub>m</sub><sup>2</sup></th>
+                        <th>钻孔/<sub>个</sub></th>
+                        <th>合计</th>
+                        <th>操作</th>
+                    </tr>
+             </thead>
+            <tbody id="orders-list">
+
+            </tbody>
         </table>
     </div>
 
     <div class="controls" style="margin-top: 50px;">
-        <input type="button" class="btn btn-success btn-medium" value="保存数据"/>
+        <input type="button" class="btn btn-success btn-medium" id="save-order" value="保存数据"/>
     </div>
-    <div id="create-order-item-window"
-         class="modal hide fade span7" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            <h3 id="title">添加订单项</h3>
-        </div>
-        <div class="modal-body">
-            <div class="controls">
-                <div class="controls controls-row">
-                    <select name="product" id="product">
-                        <option value="-1">请选择商品</option>
-                    </select>
-                    <input type="text"
-                           placeholder="数量"
-                           name="count" id="count" style="margin:-6px 0 0 15px;"/>
-                </div>
-            </div>
-            <div class="controls">
-                <div class="controls controls-row">
-                    <input class="span3" type="text" placeholder="长度">
-                    <input class="span3" type="text" placeholder="宽度">
-                </div>
-            </div>
-            <div class="controls">
 
-                <div class="controls controls-row">
-                    <input class="span3" type="text" placeholder="喷漆单价">
-                    <input class="span3" type="text" placeholder="数量">
-                </div>
-            </div>
-            <div class="controls">
-
-                <div class="controls controls-row">
-                    <input class="span3" type="text" placeholder="磨边单价">
-                    <input class="span3" type="text" placeholder="数量">
-                </div>
-            </div>
-            <div class="controls">
-
-                <div class="controls controls-row">
-                    <input class="span3" type="text" placeholder="钻空单价">
-                    <input class="span3" type="text" placeholder="数量">
-                </div>
-            </div>
-
-            <div class="controls">
-
-                <div class="controls controls-row">
-                    <input class="span3" type="text" placeholder="钢化单价">
-                    <input class="span3" type="text" placeholder="数量">
-                </div>
-            </div>
-
-            <div class="controls">
-                <div class="controls controls-row">
-                    <input class="span3" type="text" placeholder="倒角单价">
-                    <input class="span3" type="text" placeholder="数量">
-                </div>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-danger" data-dismiss="modal" aria-hidden="true">取消</button>
-            <button class="btn btn-success">添加</button>
-        </div>
-    </div>
     <style type="text/css">
+
         label.inline {
             padding-top: 0 !important;
         }
@@ -105,7 +60,10 @@
             margin-bottom: 2px !important;
         }
 
+        .error {
+            border: 1px solid #FF000 !important;
+        }
+
     </style>
-
-
 </div>
+

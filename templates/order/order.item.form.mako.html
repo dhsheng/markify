@@ -1,0 +1,77 @@
+<div id="create-order-item-window"
+         class="modal hide fade span7" tabindex="-1" role="dialog"  aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="title">添加订单项</h3>
+        </div>
+
+        <div class="modal-body" id="item-fields-wrapper">
+
+            <div class="controls">
+                <div class="controls controls-row">
+
+                    <span class="pull-left" style="margin:5px 12px 0 0;">商品/数量</span>
+                    <select name="product" id="product">
+                        <option value="-1">请选择商品</option>
+                    </select>
+                    <input type="text"
+                           placeholder="数量"
+                           name="count" id="count"  style="margin:-6px 0 0 15px;width:183px;"/>
+                </div>
+            </div>
+            <div class="controls">
+                <div class="controls controls-row">
+                    <span class="pull-left" style="margin:5px 12px 0 0;">长/宽</span>
+                    <input class="span3" type="text" name="length" id="length" placeholder="长度">
+                    <input class="span3" type="text" name="width" id="width" placeholder="宽度">
+                </div>
+            </div>
+            <div class="controls">
+                <div class="controls controls-row">
+                     <span class="pull-left" style="margin:5px 15px 0 0;">喷漆</span>
+                    <input class="span3" type="text" name="paint_price" id="paint_price" placeholder="喷漆单价">
+                    <input class="span3" type="text" name="paint_count" id="paint_count" placeholder="数量">
+                </div>
+            </div>
+            <div class="controls">
+
+                <div class="controls controls-row">
+                     <span class="pull-left" style="margin:5px 15px 0 0;">磨边</span>
+                    <input class="span3" type="text" name="edg_price" id="edg_price" placeholder="磨边单价">
+                    <input class="span3" type="text" name="edg_count" id="edg_count" placeholder="数量">
+                </div>
+            </div>
+            <div class="controls">
+
+                <div class="controls controls-row">
+                     <span class="pull-left" style="margin:5px 15px 0 0;">钻空</span>
+                    <input class="span3" type="text" name="drill_price" id="drill_price" placeholder="钻空单价">
+                    <input class="span3" type="text" name="drill_count" id="drill_count" placeholder="数量">
+                </div>
+            </div>
+
+            <div class="controls">
+
+                <div class="controls controls-row">
+                    <span class="pull-left" style="margin:5px 15px 0 0;">钢化</span>
+                    <input class="span3" type="text" name="steel_price" id="steel_price" placeholder="钢化单价">
+                    <input class="span3" type="text" name="steel_count" id="steel_count" placeholder="数量">
+                </div>
+            </div>
+
+            <div class="controls">
+                <div class="controls controls-row">
+                     <span class="pull-left" style="margin:5px 15px 0 0;">倒角</span>
+                    <input class="span3" type="text" name="chamfer_price" id="chamfer_price" placeholder="倒角单价">
+                    <input class="span3" type="text" name="chamfer_count" id="chamfer_count" placeholder="数量">
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <input type="button" class="btn btn-danger"
+                   id="cancel-add-item"
+                   value="取消" data-dismiss="modal" aria-hidden="true" />
+            <input type="button" class="btn btn-success" id="confirm-add-item" value="添加">
+        </div>
+
+    </div>

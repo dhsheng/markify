@@ -73,6 +73,9 @@ body {
 <div class="container">
     <%block name="footer"></%block>
 </div>
+<script type="text/javascript" src="/static/javascripts/jquery-1.8.js"></script>
+<script type="text/javascript" src="/static/javascripts/bootstrap.js"></script>
+
 <%block name="javascript"></%block>
 </body>
 </html>
