@@ -19,8 +19,6 @@ from markify.db.models import OrderAdditionFee
 from markify.db.models import OrderItem
 from markify.db.models import Product
 from markify.db.models import Customer
-
-
 from markify.handlers.base import BaseRequestHandler
 
 
