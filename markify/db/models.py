@@ -91,22 +91,14 @@ class Customer(Model, Base):
 class Product(Model, Base):
 
     __tablename__ = 'products'
-
+    user_id = Column(LargeBinary(16), nullable=False)
     name = Column(String(255), nullable=False)
-    total = Column(Float(2), nullable=False, default=.00)
-    amount = Column(Numeric(2), nullable=False, default=.00)
-    repo_id = Column(LargeBinary(16), default=None)
+    stock = Column(Float, nullable=False, default=.00)
+    amount = Column(Numeric, nullable=False, default=.00)
+    unit = Column(String(20), nullable=False, default='')
 
     def __repr__(self):
         return self.name
-
-
-class Repository(Model, Base):
-
-    __tablename__ = 'repositories'
-
-    name = Column(String(255), nullable=False)
-    address = Column(String(255), nullable=False, default='')
 
 
 class Order(Model, Base):
@@ -118,14 +110,13 @@ class Order(Model, Base):
     __tablename__ = 'orders'
     customer_id = Column(LargeBinary(16), nullable=False)
     name = Column(String(150), nullable=False)
-    state = Column(Enum(*(FAILED, SUCCESS, NORMAL)))
+    state = Column(Enum(*(FAILED, SUCCESS, NORMAL), name='order_state'))
     modified_logs = Column(Text)
 
 
 class OrderItem(Model, Base):
 
     __tablename__ = 'order_items'
-
     CHAMFER_SIZE = 4
 
     order_id = Column(LargeBinary(16))
@@ -146,6 +137,7 @@ class OrderItem(Model, Base):
     edg_count = Column(Numeric, default=0)
     chamfer_price = Column(Numeric, default=.00)
     chamfer_count = Column(Float, default=.0)
+    amount = Column(Numeric, default=.0)
 
     def __repr__(self):
         return u'%s[%sx%s]' % (self.product_id, self.length, self.width)
