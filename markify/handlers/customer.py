@@ -59,7 +59,6 @@ class CreateRequestHandler(CustomerRequestHandler):
             data[RESPONSE_FLAG_KEY] = False
         else:
             data[RESPONSE_FLAG_KEY] = True
-
         return self.finish(data)
 
 

@@ -29,7 +29,7 @@ class CreateRequestHandler(BaseRequestHandler):
 
     def post(self):
         user_id = self.get_current_user()
-        customer_id = self.get_argument('customer_id', '')
+        customer_id = self.get_argument('customer_id')
         name = self.get_argument('name', '')
         state = self.get_argument('state', 'N')  # default normal states
         session = get_session(scoped=True)
@@ -64,13 +64,38 @@ class CreateRequestHandler(BaseRequestHandler):
                     drill_price=drill_price, drill_count=(item.get('drill_count', 0) or total_area),
                     edg_price=edg_price, edg_count=(item.get('edg_count', 0) or total_area),
                     steel_price=steel_price, steel_count=(item.get('steel_count', 0) or total_area),
-                    product_id=item['product_id'], product_name=item['product_name']
+                    product_id=item['product_id'], product_name=item['product_name'],
+                    amount=amount
                 )
-                order_items.append((total_area, order_item))
+                order_items.append(order_item)
         except HTTPError:
             pass
-        except ValueError:
+        except (KeyError, ValueError):
             pass
+
+        if order_items:
+            order = Order(customer_id=customer_id, name=name, state=state)
+            product_areas = {}
+            for order_item in order_items:
+                order_item.order_id = order.id
+                if order_item.product_id in product_areas:
+                    product_areas[order_item.product_id] += order_item.area
+                else:
+                    product_areas[order_item.product_id] = order_item.area
+            products = session.query(Product).filter(Product.id.in_(
+                [binascii.a2b_hex(sid) for sid in product_areas.keys()])).all()
+            try:
+                for product in products:
+                    hid = binascii.b2a_hex(product.id)
+                    if hid in product_areas:
+                        product.total -= product_areas[hid]
+                        session.add(product)
+                session.add(order)
+                session.add_all(order_items)
+                #session.commit()
+            except IntegrityError:
+                session.rollback()
+
         return self.finish({'data': json.loads(self.get_argument('items', ''))})
 
 

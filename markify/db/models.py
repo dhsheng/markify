@@ -29,8 +29,9 @@ class Model(object):
     created = Column(Integer)
     deleted = Column(Boolean, default=False)
 
+    _attributes = []
+
     def __init__(self, **kwargs):
-        self._attributes = []
         for key in self.get_attributes():
             if key in kwargs:
                 setattr(self, key, kwargs[key])

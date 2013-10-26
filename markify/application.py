@@ -8,6 +8,7 @@ import config
 
 from markify.handlers import user
 from markify.handlers import order
+from markify.handlers import product
 
 
 class Application(BaseApplication):
@@ -15,10 +16,11 @@ class Application(BaseApplication):
     def __init__(self):
         handlers = [
             url(r'/order/create', order.CreateRequestHandler, name='order.create'),
-
+            url(r'/product/create', product.CreateRequestHandler, name='product.create'),
+            url(r'/products', product.ListRequestHandler, name='products'),
             url(config.LOGIN_URL, user.LoginRequestHandler, name='login'),
             url(r'/register', user.RegisterRequestHandler, name='register'),
-            url(r'/logout', user.LogoutRequestHandler, name='logout')
+            url(r'/logout', user.LogoutRequestHandler, name='logout'),
         ]
         settings = {
             'Debug': config.DEBUG,
@@ -33,7 +35,8 @@ class Application(BaseApplication):
 
 if __name__ == '__main__':
     if config.DEBUG:
-        pass
+        from markify.db.models import Base
+        Base.metadata.create_all()
     application = Application()
     application.listen(8888)
     IOLoop.instance().start()

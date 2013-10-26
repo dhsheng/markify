@@ -43,7 +43,7 @@ body {
                         <ul class="nav">
                             <li class="active"><a href="#">订单</a></li>
                             <li><a href="#about">客户</a></li>
-                            <li><a href="#contact">产品</a></li>
+                            <li><a href="${request.reverse_url('products')}">产品</a></li>
                             <li><a href="#statictis">统计</a></li>
                             <li><a href="#help">帮助</a></li>
                         </ul>

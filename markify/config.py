@@ -9,7 +9,7 @@ BASE_DIRECTORY = os.path.join(os.path.realpath(os.path.dirname(os.getcwd())))
 
 sys.path.insert(0, BASE_DIRECTORY)
 
-DB_URL = 'postgresql://markify:#!python@localhost/'
+DB_URL = 'postgresql://markify:#!python@localhost/markify'
 
 SESSION_KEY = '0a9458dea/dkal327d&##!dkslab3a0ff9ac2cb8e0473f'
 
