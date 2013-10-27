@@ -1,6 +1,6 @@
 var Markify = Markify || {};
 
-
+Markify.PRODUCTS_KEY = '/products?stock=true';
 
 Markify.SimpleCache = function() {
     this._dataKey = 'data';
@@ -11,18 +11,22 @@ Markify.SimpleCache = function() {
 Markify.SimpleCache.prototype = {
 
     get: function(key, remote, callback) {
-        var val = key in this._cache ? this._cache[key] : null;
-        if(null == val && remote) {
+        var me = this, val = key in me._cache ? me._cache[key] : null;
+        if(val != null) {
+            return val;
+        }
+        if(remote) {
             var me = this;
             $.ajax({
                 url: key,
                 type: 'GET',
                 dataType: 'json',
+                async: false,
                 success: function(response) {
-                    if(this._flag in response && response[this._flag]) {
-                        me.set(key, response[this._dataKey]);
+                    if(me._flag in response && response[me._flag]) {
+                        me.set(key, response[me._dataKey]);
                         if(callback && typeof callback == 'function') {
-                            callback(response[this._dataKey]);
+                            callback(response[me._dataKey]);
                         }
                     }
                 }
@@ -31,14 +35,17 @@ Markify.SimpleCache.prototype = {
     },
 
     set: function(key, val) {
-        this._cache[key] = value;
+        this._cache[key] = val;
     }
 };
 
 
 Markify.Order = function() {};
+Markify.cache = new Markify.SimpleCache();
 
+Markify.Product = function() {};
 
+Markify.product = new Markify.Product();
 Markify.Order.prototype = {
 
     items: {},
@@ -76,7 +83,7 @@ Markify.Order.prototype = {
             item[c] = cv;
         }
         var l = $('#length'), w = $('#width'), c = $('#count'),
-            lv, wv, cv;
+            lv, wv, cv, price = $('#price'), p;
         if(isNaN(lv = parseFloat(l.val()))) {
             errors.push(l);
         }
@@ -86,16 +93,26 @@ Markify.Order.prototype = {
         if(isNaN(cv = parseFloat(c.val()))) {
             errors.push(c);
         }
+        if(isNaN(p = parseFloat(price.val()))) {
+            errors.push(price);
+        }
         if(errors.length) {
             for(var i= 0, len=errors.length; i<len; i++) {
                 $(errors[i]).prop('style', 'border: 1px solid #FF0000');
             }
             return null;
         }
+
+        var product = $('#product').val().split('|');
+
         item['id'] = this.gid();
         item['count'] = cv;
         item['length'] = lv;
         item['width'] = wv;
+        item['price'] = p;
+        item['product_id'] = '"' + product[0] + '"';
+        item['product_name'] = '"' + product[1] + '"';
+
         this.items[item['id']] = item;
         this.insert(item);
         return item;
