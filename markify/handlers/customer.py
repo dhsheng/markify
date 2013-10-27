@@ -26,15 +26,23 @@ class CustomerRequestHandler(BaseRequestHandler):
         return name, phone, addition_phone, address, email
 
 
+class ListRequestHandler(CustomerRequestHandler):
+
+    def get(self):
+        session = get_session(scoped=True)
+        customers = session.query(Customer).all()
+        return self.render('customer/list.mako', **{'customers': customers})
+
+
 class CreateRequestHandler(CustomerRequestHandler):
 
     def get(self):
         return self.render('customer/create.mako')
 
-    @authenticated
+    #@authenticated
     def post(self):
         name, phone, addition_phone, address, email = self.extract_params()
-        user_id = self.get_current_user()
+        user_id = self.get_current_user() or '7a5e2622155442d7b1f2e623b7bc87bb'
         customer = Customer(
             name=name, phone=phone, address=address,
             addition_phone=addition_phone, email=email,
@@ -46,7 +54,6 @@ class CreateRequestHandler(CustomerRequestHandler):
             try:
                 session.add(customer)
                 session.commit()
-                data[RESPONSE_DATA_KEY] = customer.to_dict()
             except IntegrityError as e:
                 session.rollback()
                 data[RESPONSE_DATA_KEY] = e.message
@@ -102,16 +109,19 @@ class EditRequestHandler(CustomerRequestHandler):
 
 class DeleteRequestHandler(CustomerRequestHandler):
 
-    @authenticated
+    def check_xsrf_cookie(self):
+        pass
+
+    #@authenticated
     def post(self):
         id = self.get_argument('id', '')
-        user_id = self.get_current_user()
+        user_id = self.get_current_user() or '7a5e2622155442d7b1f2e623b7bc87bb'
         session = get_session(scoped=True)
         data = {}
         try:
             customer = session.query(Customer).filter(
-                id=binascii.a2b_hex(id),
-                user_id=binascii.a2b_hex(user_id)).one()
+                Customer.id == binascii.a2b_hex(id),
+                Customer.user_id == binascii.a2b_hex(user_id)).one()
             session.delete(customer)
             session.commit()
             data[RESPONSE_FLAG_KEY] = True
