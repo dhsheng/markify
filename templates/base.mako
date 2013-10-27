@@ -41,11 +41,11 @@ body {
                     <a class="brand" href="#">markify</a>
                     <div class="nav-collapse collapse">
                         <ul class="nav">
-                            <li class="active"><a href="#">订单</a></li>
-                            <li><a href="#about">客户</a></li>
-                            <li><a href="${request.reverse_url('products')}">产品</a></li>
-                            <li><a href="#statictis">统计</a></li>
-                            <li><a href="#help">帮助</a></li>
+                            <li id="orders"><a href="${request.reverse_url('orders')}">订单</a></li>
+                            <li id="customers"><a href="${request.reverse_url('customers')}">客户</a></li>
+                            <li id="products"><a href="${request.reverse_url('products')}">产品</a></li>
+                            <li id="stats"><a href="#statictis">统计</a></li>
+                            <li id="help"><a href="#help">帮助</a></li>
                         </ul>
                     </div>
                     <form action="" class="navbar-search pull-left">
