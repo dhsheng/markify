@@ -25,7 +25,10 @@ class CreateRequestHandler(BaseRequestHandler):
         stock = self.get_argument('stock', '')
         amount = self.get_argument('amount', '')
         unit = self.get_argument('unit', '')
-        product = Product(name=name, total=stock, amount=amount, unit=unit)
+        user_id = self.get_current_user() or '7a5e2622155442d7b1f2e623b7bc87bb'
+        product = Product(name=name, total=stock,
+                          user_id=binascii.a2b_hex(user_id),
+                          amount=amount, unit=unit)
         data = {}
         if product.is_valid():
             session = get_session(scoped=True)
@@ -33,8 +36,8 @@ class CreateRequestHandler(BaseRequestHandler):
                 session.add(product)
                 session.commit()
                 data[RESPONSE_FLAG_KEY] = True
-                data[RESPONSE_DATA_KEY] = product.to_dict()
-            except IntegrityError:
+            except IntegrityError as e:
+                print e
                 session.rollback()
                 data[RESPONSE_FLAG_KEY] = False
         else:
@@ -47,11 +50,9 @@ class ListRequestHandler(BaseRequestHandler):
 
     def get(self):
         session = get_session(scoped=True)
-        products = session.query(Product).all()
-        return self.finish({
-            RESPONSE_FLAG_KEY: True,
-            RESPONSE_DATA_KEY: [product.to_dict() for product in products]
-        })
+        user_id = '7a5e2622155442d7b1f2e623b7bc87bb'
+        products = session.query(Product).filter_by(user_id=binascii.a2b_hex(user_id)).all()
+        return self.render('product/list.mako', **{'products': products})
 
 
 class EditRequestHandler(BaseRequestHandler):
@@ -78,3 +79,29 @@ class EditRequestHandler(BaseRequestHandler):
             session.rollback()
         if session:
             session.close()
+
+
+class DeleteRequestHandler(BaseRequestHandler):
+
+    def check_xsrf_cookie(self):
+        pass
+
+    #@authenticated
+    def post(self):
+        id = self.get_argument('id', '')
+        user_id = self.get_current_user() or '7a5e2622155442d7b1f2e623b7bc87bb'
+        session = get_session(scoped=True)
+        data = {}
+        try:
+            customer = session.query(Product).filter(
+                Product.id == binascii.a2b_hex(id),
+                Product.user_id == binascii.a2b_hex(user_id)).one()
+            session.delete(customer)
+            session.commit()
+            data[RESPONSE_FLAG_KEY] = True
+        except (NoResultFound, MultipleResultsFound):
+            data[RESPONSE_FLAG_KEY] = False
+        finally:
+            if session:
+                session.close()
+        return self.finish(data)
