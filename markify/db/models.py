@@ -19,6 +19,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm.attributes import InstrumentedAttribute
 
 from markify.db import get_engine
+from markify.db import get_session
 
 
 class Model(object):
@@ -49,12 +50,12 @@ class Model(object):
                                               InstrumentedAttribute)]
         return self._attributes
 
-    def to_dict(self, *ignores):
-        data = {}
-        for attr in self.get_attributes():
-            if attr not in ignores:
-                data[attr] = getattr(self, attr, '')
-        return data
+    def is_valid(self):
+        return True
+
+    def get_errors(self):
+        return {}
+
 
 Base = declarative_base(bind=get_engine(), metadata=MetaData())
 
@@ -110,9 +111,19 @@ class Order(Model, Base):
 
     __tablename__ = 'orders'
     customer_id = Column(LargeBinary(16), nullable=False)
+    customer_name = Column(String(50), nullable=False)
     name = Column(String(150), nullable=False)
     state = Column(Enum(*(FAILED, SUCCESS, NORMAL), name='order_state'))
     modified_logs = Column(Text)
+    amount = Column(Numeric, nullable=False, default=.00)
+
+    def get_items(self):
+        session = get_session()
+        order_items = session.query(OrderItem).filter(
+            OrderItem.order_id == self.id).all()
+        for order_item in order_items:
+            yield order_item
+
 
 
 class OrderItem(Model, Base):

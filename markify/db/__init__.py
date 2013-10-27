@@ -18,7 +18,7 @@ def get_engine():
     return _GLOBAL_ENGINE
 
 
-def get_session(engine=get_engine(), scoped=False, **kwargs):
+def get_session(engine=get_engine(), scoped=True, **kwargs):
     autocommit = kwargs.pop('autocommit', False)
     autoflush = kwargs.pop('autoflush', True)
     if not scoped:
