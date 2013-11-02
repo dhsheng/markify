@@ -3,6 +3,7 @@
 import binascii
 
 from tornado.web import authenticated
+from tornado.web import HTTPError
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.orm.exc import MultipleResultsFound
@@ -42,7 +43,7 @@ class CreateRequestHandler(CustomerRequestHandler):
     #@authenticated
     def post(self):
         name, phone, addition_phone, address, email = self.extract_params()
-        user_id = self.get_current_user() or '7a5e2622155442d7b1f2e623b7bc87bb'
+        user_id = self.get_current_user()
         customer = Customer(
             name=name, phone=phone, address=address,
             addition_phone=addition_phone, email=email,
@@ -72,7 +73,19 @@ class CreateRequestHandler(CustomerRequestHandler):
 class EditRequestHandler(CustomerRequestHandler):
 
     def get(self):
-        pass
+        id = self.get_argument('id', '')
+        user_id = self.get_current_user()
+        session = get_session(scoped=True)
+        try:
+            customer = session.query(Customer).filter(
+                Customer.id == binascii.a2b_hex(id),
+                Customer.user_id == binascii.a2b_hex(user_id)).one()
+        except (NoResultFound, MultipleResultsFound):
+            pass
+        finally:
+            if session:
+                session.close()
+        return self.render('customer/edit.mako', **{'customer': customer})
 
     @authenticated
     def post(self):
@@ -80,8 +93,8 @@ class EditRequestHandler(CustomerRequestHandler):
         user_id = self.get_current_user()
         session = get_session(scoped=True)
         try:
-            customer = session.query(Customer).filter(id=binascii.a2b_hex(id),
-                                                      user_id=binascii.a2b_hex(user_id)).one()
+            customer = session.query(Customer).filter(Customer.id == binascii.a2b_hex(id),
+                                                      Customer.user_id == binascii.a2b_hex(user_id)).one()
         except(NoResultFound, MultipleResultsFound) as e:
             data = {RESPONSE_FLAG_KEY: False, RESPONSE_ERROR_KEY: e.message}
             return self.finish(data)
@@ -96,7 +109,6 @@ class EditRequestHandler(CustomerRequestHandler):
             session.add(customer)
             session.commit()
             data[RESPONSE_FLAG_KEY] = True
-            data[RESPONSE_DATA_KEY] = customer.to_dict()
         except IntegrityError as e:
             session.rollback()
             data[RESPONSE_DATA_KEY] = e.message
@@ -112,10 +124,10 @@ class DeleteRequestHandler(CustomerRequestHandler):
     def check_xsrf_cookie(self):
         pass
 
-    #@authenticated
+    @authenticated
     def post(self):
         id = self.get_argument('id', '')
-        user_id = self.get_current_user() or '7a5e2622155442d7b1f2e623b7bc87bb'
+        user_id = self.get_current_user()
         session = get_session(scoped=True)
         data = {}
         try:

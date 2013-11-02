@@ -14,25 +14,7 @@
                 </div>
                 <div class="modal-body">
                     <form action="" id="customer-create-form">
-                        <div class="form-group">
-                            <input class="form-control" type="text"
-                                   name="name" id="name" placeholder="客户名称"/>
-                        </div>
-                        <div class="form-group">
-                            <input class="form-control" type="text" name="phone" id="phone" placeholder="电话1"/>
-                        </div>
-
-                        <div class="form-group">
-                            <input class="form-control" type="text" name="addition_phone" id="addition_phone"
-                                   placeholder="电话2"/>
-                        </div>
-                        <div class="form-group">
-                            <input class="form-control" type="text" name="email" id="email" placeholder="电子邮箱"/>
-                        </div>
-                        <div class="form-group">
-                            <input class="form-control" type="text" name="address" id="address" placeholder="地址"/>
-                        </div>
-                    ${request.xsrf_form_html()}
+                        <%include file="form.mako" />
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -57,14 +39,14 @@
     <%! from datetime import datetime as dt %>
     <%! import binascii %>
     %for customer in customers:
-        <tr>
+        <tr id="row-${binascii.b2a_hex(customer.id)}">
             <td>${customer.name}</td>
             <td>${customer.phone}</td>
             <td>${customer.address}</td>
             <td>${customer.email}</td>
             <td>${dt.fromtimestamp(customer.created).strftime('%Y-%m-%d')}</td>
             <td>
-                <a href="/customer/edit?id=${binascii.b2a_hex(customer.id)}">编辑</a>
+                <a class="edit-link" href="/customer/edit?id=${binascii.b2a_hex(customer.id)}">编辑</a>
                 <a class="delete-link" data-id="${binascii.b2a_hex(customer.id)}"
 
                    href="javascript:void(0)">删除</a>
@@ -104,7 +86,8 @@
                     }
                 }
             })
-        })
+        });
+
     </script>
 
 </%block>
