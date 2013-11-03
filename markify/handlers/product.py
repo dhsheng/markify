@@ -25,7 +25,7 @@ class CreateRequestHandler(BaseRequestHandler):
         stock = self.get_argument('stock', '')
         amount = self.get_argument('amount', '')
         unit = self.get_argument('unit', '')
-        user_id = self.get_current_user() or '7a5e2622155442d7b1f2e623b7bc87bb'
+        user_id = self.get_current_user()
         product = Product(name=name, total=stock,
                           user_id=binascii.a2b_hex(user_id),
                           amount=amount, unit=unit)
@@ -58,27 +58,46 @@ class ListRequestHandler(BaseRequestHandler):
 class EditRequestHandler(BaseRequestHandler):
 
     def get(self):
-        pass
+        id = self.get_argument('id', '')
+        user_id = self.get_current_user()
+        session = get_session(scoped=True)
+        error = False
+        try:
+            product = session.query(Product).filter(
+                Product.id == binascii.a2b_hex(id),
+                Product.user_id == binascii.a2b_hex(user_id)).one()
+        except (NoResultFound, MultipleResultsFound, TypeError):
+            error = True
+        finally:
+            if session:
+                session.close()
+        if error:
+            return self.render('error.mako')
+        return self.render('product/edit.mako', **{'product': product})
 
     def post(self):
-        session = get_session(scoped=True)
+        session = get_session()
+        error = False
         try:
-            product = session.query(Product).filter(id=binascii.a2b_hex(
+            product = session.query(Product).filter(Product.id == binascii.a2b_hex(
                 self.get_argument('id')
-            )).one()
+            ), Product.user_id == binascii.a2b_hex(self.get_current_user())).one()
             product.name = self.get_argument('name')
-            product.amount = self.get_argument('amount')
-            product.stock = self.get_argument('stock')
+            product.amount = round(float(self.get_argument('amount')), 2)
+            product.stock = round(float(self.get_argument('stock')), 2)
+            product.unit = self.get_argument('unit')
             session.add(product)
             session.commit()
-        except (TypeError, HTTPError):
-            pass
-        except (NoResultFound, MultipleResultsFound):
-            pass
+        except (TypeError, HTTPError, NoResultFound, MultipleResultsFound):
+            error = True
         except IntegrityError:
             session.rollback()
+            error = True
         if session:
             session.close()
+        if error:
+            return self.render('error.mako')
+        return self.redirect(self.reverse_url('products'))
 
 
 class DeleteRequestHandler(BaseRequestHandler):
@@ -86,17 +105,17 @@ class DeleteRequestHandler(BaseRequestHandler):
     def check_xsrf_cookie(self):
         pass
 
-    #@authenticated
+    @authenticated
     def post(self):
         id = self.get_argument('id', '')
-        user_id = self.get_current_user() or '7a5e2622155442d7b1f2e623b7bc87bb'
+        user_id = self.get_current_user()
         session = get_session(scoped=True)
         data = {}
         try:
-            customer = session.query(Product).filter(
+            product = session.query(Product).filter(
                 Product.id == binascii.a2b_hex(id),
                 Product.user_id == binascii.a2b_hex(user_id)).one()
-            session.delete(customer)
+            session.delete(product)
             session.commit()
             data[RESPONSE_FLAG_KEY] = True
         except (NoResultFound, MultipleResultsFound):

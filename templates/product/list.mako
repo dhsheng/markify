@@ -78,20 +78,7 @@
                 </div>
                 <div class="modal-body">
                     <form action="" id="product-create-form">
-                        <div class="form-group">
-                            <input class="form-control" type="text"
-                                   name="name" id="name" placeholder="商品名称"/>
-                        </div>
-                        <div class="form-group">
-                            <input class="form-control" type="text" name="total" id="name" placeholder="商品数量"/>
-                        </div>
-                        <div class="form-group">
-                            <input class="form-control" type="text" name="unit" id="name" placeholder="单位"/>
-                        </div>
-                        <div class="form-group">
-                            <input class="form-control" type="text" name="amount" id="name" placeholder="商品总金额"/>
-                        </div>
-                    ${request.xsrf_form_html()}
+                        <%include file="form.mako" />
                     </form>
                 </div>
                 <div class="modal-footer">
