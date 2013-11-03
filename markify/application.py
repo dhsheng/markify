@@ -10,13 +10,13 @@ from markify.handlers import user
 from markify.handlers import order
 from markify.handlers import product
 from markify.handlers import customer
+from markify.handlers import site
 
 
 class Application(BaseApplication):
 
     def __init__(self):
         handlers = [
-
             url(r'/order/create', order.CreateRequestHandler, name='order.create'),
             url(r'/order/edit', order.EditRequestHandler, name='order.edit'),
             url(r'^/$', order.ListRequestHandler, name='orders'),
@@ -32,6 +32,7 @@ class Application(BaseApplication):
             url(r'/customer/view', customer.ViewRequestHandler, name='customer.view'),
             url(r'/register', user.RegisterRequestHandler, name='register'),
             url(r'/logout', user.LogoutRequestHandler, name='logout'),
+            url(r'/error', site.ErrorRequestHandler, name='error')
         ]
 
         settings = {
