@@ -2,6 +2,7 @@
 
 import uuid
 import time
+import json
 import binascii
 
 from sqlalchemy.schema import Column
@@ -55,6 +56,24 @@ class Model(object):
 
     def get_errors(self):
         return {}
+
+    def safe_convert(self, typ, val):
+        if isinstance(typ, LargeBinary):
+            return binascii.b2a_hex(val)
+        elif isinstance(typ, Numeric):
+            return round(val, 2)
+        return val
+
+    def to_dict(self):
+        data = {}
+        for col in self._sa_class_manager.mapper.mapped_table.columns:
+            typ, name = col.type, col.name
+            data[name] = self.safe_convert(typ, getattr(self, name))
+        return data
+
+    def to_json(self):
+        return json.dumps(self.to_dict())
+
 
 
 Base = declarative_base(bind=get_engine(), metadata=MetaData())
@@ -123,6 +142,17 @@ class Order(Model, Base):
             OrderItem.order_id == self.id).all()
         for order_item in order_items:
             yield order_item
+
+    def items_to_json(self, id_as_key=False):
+        items = {} if id_as_key else []
+        for item in self.get_items():
+            if id_as_key:
+                item = item.to_dict()
+                items[item.pop('id')] = item
+            else:
+                items.append(item.to_dict())
+        return json.dumps(items)
+
 
 
 
