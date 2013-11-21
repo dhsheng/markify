@@ -142,6 +142,7 @@ class Order(Model, Base):
             OrderItem.order_id == self.id).all()
         for order_item in order_items:
             yield order_item
+        session.close()
 
     def items_to_json(self, id_as_key=False):
         items = {} if id_as_key else []
