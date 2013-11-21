@@ -8,10 +8,8 @@ from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 
 from markify.config import RESPONSE_DATA_KEY
 from markify.config import RESPONSE_FLAG_KEY
-from markify.config import RESPONSE_ERROR_KEY
 from markify.db import get_session
 from markify.db.models import Product
-from markify.db.models import User
 from markify.handlers.base import BaseRequestHandler
 
 
@@ -36,8 +34,7 @@ class CreateRequestHandler(BaseRequestHandler):
                 session.add(product)
                 session.commit()
                 data[RESPONSE_FLAG_KEY] = True
-            except IntegrityError as e:
-                print e
+            except IntegrityError:
                 session.rollback()
                 data[RESPONSE_FLAG_KEY] = False
         else:
@@ -52,6 +49,10 @@ class ListRequestHandler(BaseRequestHandler):
         session = get_session(scoped=True)
         user_id = '7a5e2622155442d7b1f2e623b7bc87bb'
         products = session.query(Product).filter_by(user_id=binascii.a2b_hex(user_id)).all()
+        if self.get_argument('format', '') == 'json':
+            return self.finish({RESPONSE_FLAG_KEY: True, RESPONSE_DATA_KEY: [
+                {'name': p.name, 'id': binascii.b2a_hex(p.id)} for p in products
+            ]})
         return self.render('product/list.mako', **{'products': products})
 
 
@@ -105,7 +106,7 @@ class DeleteRequestHandler(BaseRequestHandler):
     def check_xsrf_cookie(self):
         pass
 
-    @authenticated
+    #@authenticated
     def post(self):
         id = self.get_argument('id', '')
         user_id = self.get_current_user()
