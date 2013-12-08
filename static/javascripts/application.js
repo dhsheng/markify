@@ -18,7 +18,7 @@ Markify.SimpleCache.prototype = {
         if(remote) {
             var me = this;
             $.ajax({
-                url: key,
+                url: key + '&format=json',
                 type: 'GET',
                 dataType: 'json',
                 async: false,
@@ -122,7 +122,11 @@ Markify.Order.prototype = {
         if(item) {
             this.table.removeClass('hide');
         }
-        var cells = '<tr><td></td><td></td><td></td><td></td>';
+        var cells = '<tr>';
+        cells += '<td>' + item['product_name'].substr(1, item['product_name'].length-2) +  '</td>';
+        cells += '<td>' + item['length'] + 'x' + item['width'] + '</td>';
+        cells += '<td>' + item['count'] + '</td>';
+        cells += '<td>' + item['price'] + '</td>';
         cells += '<td>' + item['edg_price'] + '</td>';
         cells += '<td>' + item['chamfer_price'] + '</td>';
         cells += '<td>' + item['steel_price'] +  '</td>';
@@ -145,9 +149,11 @@ Markify.Order.prototype = {
             type: 'POST',
             dataType: 'json',
             success: function(response) {
-
+                if(response.success) {
+                    window.location.href='/';
+                }
             }
-        })
+        });
     },
 
     itemToString: function(item) {
