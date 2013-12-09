@@ -5,18 +5,35 @@
                value="${order and order.name or ''}"
                placeholder="输入订单名字" name="name">
     </div>
+    
+    <div class="controls">
+    	<label for="customer">
+    		订单客户
+    	</label>
+    	<select name="customer" id="customers-opt">
+    			<option value="-1">请选择客户</option>
+        </select>
+    </div>
+    
     <div class="controls">
         <label for="state-normal">
             状态
         </label>
         <label class="checkbox inline">
-            <input type="checkbox" id="state-normal" ${order.state == 'N' and ' checked="checked" ' or ''} value="N"> 未付款
+
+            <input type="radio" id="state-normal"
+                   name="state"
+                ${ 'checked="checked"' if not order.state else ''} value="N"> 未付款
         </label>
         <label class="checkbox inline">
-            <input type="checkbox" id="state-success" ${order.state == 'S' and ' checked="checked" ' or ''} value="S"> 已付款
+            <input type="radio" id="state-success"
+                 name="state"
+                ${order.state == 'S' and ' checked="checked" ' or ''} value="S"> 已付款
         </label>
         <label class="checkbox inline">
-            <input type="checkbox" id="state-failed" value="F" ${order.state == 'F' and ' checked="checked" ' or ''}> 已作废
+            <input type="radio"
+                    name="state"
+                   id="state-failed" value="F" ${order.state == 'F' and ' checked="checked" ' or ''}> 已作废
         </label>
     </div>
     <div class="controls" id="orders-wrapper" style="margin-top:20px;">
@@ -52,10 +69,11 @@
                         <td>${order_item.steel_price}x${order_item.steel_count}</td>
                         <td>${order_item.paint_price}x${order_item.paint_count}</td>
                         <td>${order_item.drill_price}x${order_item.drill_count}</td>
-                        <td>${order_item.amount}</td>
+                        <td>${round(order_item.amount, 2)}</td>
                         <td>
-                            <a href="/order/item/edit?id=${binascii.b2a_hex(order_item.id)}">编辑</a>
-                            <a href="/order/item/delete?id=${binascii.b2a_hex(order_item.id)}">删除</a>
+                            <a class="item-edit" data-id="${binascii.b2a_hex(order_item.id)}" href="#" >编辑</a>
+                            <a class="item-delete" href="#"
+                               data-id="${binascii.b2a_hex(order_item.id)}">删除</a>
                         </td>
                     </tr>
                 %endfor
@@ -86,4 +104,5 @@
         }
     </style>
 </div>
+
 

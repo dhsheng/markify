@@ -19,6 +19,7 @@ class Application(BaseApplication):
         handlers = [
             url(r'/order/create', order.CreateRequestHandler, name='order.create'),
             url(r'/order/edit', order.EditRequestHandler, name='order.edit'),
+            url(r'/order/view', order.ViewRequestHandler, name='order.view'),
             url(r'^/$', order.ListRequestHandler, name='orders'),
             url(r'/product/create', product.CreateRequestHandler, name='product.create'),
             url(r'/products', product.ListRequestHandler, name='products'),

@@ -1,7 +1,7 @@
 <%inherit file="../base.mako" />
 <%block name="title">商品编辑-${product and product.name or ''}</%block>
 <%block name="content">
-<form method="POST" action="${request.reverse_url('product.edit')}">
+<form method="POST" action="${request.reverse_url('product.create')}">
 <%include file="form.mako" />
      <%! import binascii %>
     <input type="hidden" id="id" name="id" value="${product and binascii.b2a_hex(product.id) or ''}" />

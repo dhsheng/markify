@@ -37,7 +37,17 @@
                     }
                 })('#product'));
             });
-        })();
 
+            var ITEMS = ${order.items_to_json(True) or 'null'};
+            $('.item-edit').click(function() {
+                var id = $(this).attr('data-id'), item = ITEMS[id];
+                if(item) {
+                    for(var k in item) {
+                        $('#' + k).val(item[k]);
+                    }
+                    $('#create-order-item-window').modal('show');
+                }
+            });
+        })();
     </script>
 </%block>

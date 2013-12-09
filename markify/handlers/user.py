@@ -49,20 +49,21 @@ class RegisterRequestHandler(BaseRequestHandler):
 class LoginRequestHandler(BaseRequestHandler):
 
     def post(self):
-        email = self.get_argument('email', '')
+        username = self.get_argument('username', '')
         password = self.get_argument('password', '')
         redirect = self.get_argument('next', LOGGED_REDIRECT_URL)
         session = get_session(scoped=True)
         try:
-            user = session.query(User).filter(User.email == email).one()
+            user = session.query(User).filter(User.username == username).one()
             if password and user.password == md5(password).hexdigest():
                 self.set_cookie(SESSION_KEY, b2a_hex(user.id))
+                self.set_cookie('username', user.username)
                 return self.redirect(redirect)
             raise NoResultFound('login failed')
         except NoResultFound:
-            pass
+            raise NoResultFound
         except MultipleResultsFound:
-            pass
+            raise MultipleResultsFound
 
     def get(self):
         return self.render('user/login.html')
@@ -70,6 +71,6 @@ class LoginRequestHandler(BaseRequestHandler):
 
 class LogoutRequestHandler(BaseRequestHandler):
 
-    def post(self):
+    def get(self):
         self.clear_cookie(SESSION_KEY)
         return self.redirect(LOGIN_URL)

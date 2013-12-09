@@ -10,7 +10,7 @@
 
 
 <%block name="javascript">
-    <script type="text/javascript" src="/static/javascripts/application.js"></script>
+    <script type="text/javascript" src="${request.static_url('javascripts/application.js')}"></script>
     <script type="text/javascript">
         (function () {
             $('#add-item').click(function () {
@@ -37,7 +37,20 @@
                     }
                 })('#product'));
             });
+            
+            $(function () {
+                Markify.cache.get('/customers?', true, (function (id) {
+                    return function (customers) {
+                        var opts = [];
+                        for (var i = 0, c, len = customers.length; i < len; i++) {
+                            c = customers[i];
+                            opts.push('<option value="' + c.id + '|' + c.name + '">' + c.name + '</option>');
+                        }
+                        $(id).append(opts.join(""));
+                    }
+                })('#customers-opt'));
+            });
         })();
-
+$('#orders').addClass('active');
     </script>
 </%block>

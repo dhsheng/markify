@@ -23,19 +23,23 @@ from markify.handlers.base import BaseRequestHandler
 
 
 class CreateRequestHandler(BaseRequestHandler):
-
+    
+    @authenticated
     def get(self):
-        return self.render('order/create.mako')
-
+        return self.render('order/create.mako', **{'order': Order()})
+    
+    @authenticated
     def post(self):
+        order_id = self.get_argument('id', '')
         user_id = self.get_current_user()
-        user_id = user_id or '7a5e2622155442d7b1f2e623b7bc87bb'
-        customer_id = self.get_argument('customer_id', user_id)
+        customer = self.get_argument('customer', user_id)
+        customer_id, customer_name = customer.split('|')
         name = self.get_argument('name', '')
-        customer_name = self.get_argument('customer_name', '')
+        #customer_name = self.get_argument('customer_name', '')
         state = self.get_argument('state', 'N')  # default normal states
         session = get_session(scoped=True)
         order_items = []
+        error = False
         try:
             items = json.loads(self.get_argument('items'))
             for item in items:
@@ -71,19 +75,22 @@ class CreateRequestHandler(BaseRequestHandler):
                 )
                 order_items.append(order_item)
         except HTTPError:
-            pass
-        except (KeyError, ValueError) as e:
-            print '*' * 20, e.message
+            error = True
+        except (KeyError, ValueError):
+            error = True
 
-        if order_items:
-            order = Order(customer_id=binascii.a2b_hex(customer_id),
+        if order_items and not error:
+            order = None
+            if order_id:
+                order = session.query(Order).filter(Order.id == binascii.a2b_hex(order_id)).one()
+            if not order:
+                order = Order(customer_id=binascii.a2b_hex(customer_id),
                           customer_name=customer_name,
-                          amount=sum([item.amount for item in order_items]),
+                          amount=round(sum([item.amount for item in order_items]), 2),
                           name=name, state=state, user_id=user_id)
             product_areas = {}
             for order_item in order_items:
                 order_item.order_id = order.id
-                print order_item.area
                 if order_item.product_id in product_areas:
                     product_areas[order_item.product_id] += order_item.area
                 else:
@@ -94,7 +101,6 @@ class CreateRequestHandler(BaseRequestHandler):
             try:
                 for product in products:
                     if product.id in product_areas:
-                        print product_areas[product.id], ' sub'
                         product.stock = product.stock - product_areas[product.id]
                         session.add(product)
                 session.add(order)
@@ -102,27 +108,44 @@ class CreateRequestHandler(BaseRequestHandler):
                 session.commit()
             except IntegrityError:
                 session.rollback()
-
-        return self.finish({'data': json.loads(self.get_argument('items', ''))})
+                error = True
+            finally:
+                if session:
+                    session.close()
+        return self.finish({RESPONSE_FLAG_KEY: not error})
 
 
 class EditRequestHandler(BaseRequestHandler):
 
+    @authenticated
     def post(self):
         pass
-
+    
+    @authenticated
     def get(self):
         order_id = self.get_argument('id')
-        user_id = self.get_current_user()
         s = get_session()
         order = s.query(Order).filter(Order.id == binascii.a2b_hex(order_id)).one()
-
         return self.render('order/edit.mako', **{'order': order})
 
 
 class ListRequestHandler(BaseRequestHandler):
 
+
+    @authenticated
     def get(self):
         s = get_session(scoped=True)
         orders = s.query(Order).all()
         return self.render('order/list.mako', **{'orders': orders})
+
+
+class ViewRequestHandler(BaseRequestHandler):
+    
+    @authenticated
+    def get(self):
+        order_id = self.get_argument('id')
+        session = get_session()
+        order = session.query(Order).filter(Order.id == binascii.a2b_hex(order_id)).one()
+        return self.render('order/view.mako', **{
+            'order': order
+        })

@@ -154,6 +154,11 @@ class Order(Model, Base):
                 items.append(item.to_dict())
         return json.dumps(items)
 
+    def to_json(self):
+        data = self.to_dict()
+        data['items'] = [item.to_dict() for item in self.get_items()]
+        return json.dumps(data)
+
 
 
 

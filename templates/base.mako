@@ -26,7 +26,6 @@ body {
         }
     </style>
     <%block name="stylesheet"></%block>
-    <link href="" rel="stylesheet">
 </head>
 <body>
     <%block name="header">
@@ -38,7 +37,7 @@ body {
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="brand" href="#">markify</a>
+                    <a class="brand" href="#" style="padding-left:0;padding-right:40px;">markify</a>
                     <div class="nav-collapse collapse">
                         <ul class="nav">
                             <li id="orders"><a href="${request.reverse_url('orders')}">订单</a></li>
@@ -58,7 +57,7 @@ body {
                                 帐号<b class="caret"></b></a>
                             <ul class="dropdown-menu">
                                 <li><a href="#">设置</a></li>
-                                <li><a href="#">注销</a></li>
+                                <li><a href="${request.reverse_url('logout')}">注销</a></li>
                             </ul>
                         </li>
                     </ul>

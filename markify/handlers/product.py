@@ -3,6 +3,7 @@
 import binascii
 
 from tornado.web import HTTPError
+from tornado.web import authenticated
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 
@@ -14,10 +15,13 @@ from markify.handlers.base import BaseRequestHandler
 
 
 class CreateRequestHandler(BaseRequestHandler):
-
+    
+    
+    @authenticated
     def get(self):
         pass
-
+    
+    @authenticated
     def post(self):
         name = self.get_argument('name', '')
         stock = self.get_argument('stock', '')
@@ -44,7 +48,8 @@ class CreateRequestHandler(BaseRequestHandler):
 
 
 class ListRequestHandler(BaseRequestHandler):
-
+    
+    @authenticated
     def get(self):
         session = get_session(scoped=True)
         user_id = '7a5e2622155442d7b1f2e623b7bc87bb'
@@ -57,7 +62,8 @@ class ListRequestHandler(BaseRequestHandler):
 
 
 class EditRequestHandler(BaseRequestHandler):
-
+    
+    @authenticated
     def get(self):
         id = self.get_argument('id', '')
         user_id = self.get_current_user()
@@ -75,7 +81,8 @@ class EditRequestHandler(BaseRequestHandler):
         if error:
             return self.render('error.mako')
         return self.render('product/edit.mako', **{'product': product})
-
+    
+    @authenticated
     def post(self):
         session = get_session()
         error = False
@@ -106,7 +113,7 @@ class DeleteRequestHandler(BaseRequestHandler):
     def check_xsrf_cookie(self):
         pass
 
-    #@authenticated
+    @authenticated
     def post(self):
         id = self.get_argument('id', '')
         user_id = self.get_current_user()

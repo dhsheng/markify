@@ -28,19 +28,23 @@ class CustomerRequestHandler(BaseRequestHandler):
 
 
 class ListRequestHandler(CustomerRequestHandler):
-
+    
+    @authenticated
     def get(self):
         session = get_session(scoped=True)
         customers = session.query(Customer).all()
+        if self.get_argument('format', '') == 'json':
+            return self.finish({RESPONSE_DATA_KEY: [c.to_dict() for c in customers], RESPONSE_FLAG_KEY: True})
         return self.render('customer/list.mako', **{'customers': customers})
 
 
 class CreateRequestHandler(CustomerRequestHandler):
-
+    
+    @authenticated
     def get(self):
         return self.render('customer/create.mako')
 
-    #@authenticated
+    @authenticated
     def post(self):
         name, phone, addition_phone, address, email = self.extract_params()
         user_id = self.get_current_user()
@@ -71,7 +75,8 @@ class CreateRequestHandler(CustomerRequestHandler):
 
 
 class EditRequestHandler(CustomerRequestHandler):
-
+    
+    @authenticated
     def get(self):
         id = self.get_argument('id', '')
         user_id = self.get_current_user()
