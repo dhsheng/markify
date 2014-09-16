@@ -52,7 +52,7 @@ class ListRequestHandler(BaseRequestHandler):
     @authenticated
     def get(self):
         session = get_session(scoped=True)
-        user_id = '7a5e2622155442d7b1f2e623b7bc87bb'
+        user_id = self.get_cookie('user_id')
         products = session.query(Product).filter_by(user_id=binascii.a2b_hex(user_id)).all()
         if self.get_argument('format', '') == 'json':
             return self.finish({RESPONSE_FLAG_KEY: True, RESPONSE_DATA_KEY: [
